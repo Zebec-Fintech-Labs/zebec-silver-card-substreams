@@ -1,0 +1,19 @@
+specVersion: 1.0.0
+description: solana-zebec-silver-card Substreams-powered-Subgraph
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: substreams
+    name: solana_zebec_silver_card
+    network: solana-mainnet-beta
+    source:
+      package:
+        moduleName: map_silver_card_data
+        file: ../solana-zebec-silver-card-v0.1.0.spkg
+    mapping:
+      apiVersion: 0.0.7
+      kind: substreams/graph-entities
+      file: ./src/mappings.ts
+      handler: handleTriggers

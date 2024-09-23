@@ -1,0 +1,42 @@
+specVersion: v0.1.0
+package:
+  name: solana_zebec_silver_card
+  version: v0.1.0
+
+imports:
+  solana: https://spkg.io/streamingfast/solana-common-v0.3.0.spkg
+
+protobuf:
+  files:
+    - silver-card/v1/silver-card.proto
+  importPaths:
+    - ./proto
+  excludePaths:
+    - sf/substreams/rpc
+    - sf/substreams/v1
+    - sf/substreams/sink
+    - sf/substreams/index
+    - sf/substreams/index/v1
+    - instructions.proto # sol.instructions.v1 from the v0.2.0 spkg
+    - transactions.proto # sol.transactions.v1 from the v0.2.0 spkg
+    - google
+
+binaries:
+  default:
+    type: wasm/rust-v1
+    file: ./target/wasm32-unknown-unknown/release/substreams.wasm
+
+modules:
+  - name: map_silver_card_data
+    kind: map
+    initialBlock: 286080076
+    inputs:
+      - map: solana:blocks_without_votes
+    output:
+      type: proto:silver_card.v1.Output
+    # blockFilter:
+    #   module: solana:program_ids_without_votes
+    #   query:
+    #     string: program:HxZq3iRwN2a2myikHz8JNVufJ7FM92xV8kNvFpQaRgKd
+
+network: solana-mainnet-beta

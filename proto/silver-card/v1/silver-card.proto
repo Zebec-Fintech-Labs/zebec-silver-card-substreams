@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package silver_card.v1;
+
+message Output {
+  repeated Deposit deposits = 1;
+}
+
+enum DepositType {
+  DEPOSIT_TYPE_UNSPECIFIED = 0;
+  DEPOSIT_TYPE_USDC = 1;
+  DEPOSIT_TYPE_NATIVE = 2;
+  DEPOSIT_TYPE_NON_NATIVE = 3;
+}
+
+message Deposit {
+  string tx_hash = 1;
+  string source = 2;
+  string destination = 3;
+  string input_token = 4;
+  string output_token = 5;
+  uint64 input_amount = 6;
+  uint64 output_amount = 7;
+  DepositType deposit_type = 8;
+  int64 timestamp = 9;
+}

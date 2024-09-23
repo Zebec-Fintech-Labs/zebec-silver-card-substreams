@@ -1,0 +1,19 @@
+enum DepositType {
+    Unspecified,
+    Usdc,
+    Native,
+    NonNative,
+}
+
+type Deposit @entity {
+    id: ID!
+    txHash: String!
+    source: String!
+    destination: String!
+    inputToken: String!
+    outputToken: String!
+    inputAmount: BigInt!
+    outputAmount: BigInt!
+    depositType: Int!
+    timestamp: Timestamp!
+}
