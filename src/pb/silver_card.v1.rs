@@ -92,8 +92,8 @@ pub struct WithdrawYield {
     pub user: ::prost::alloc::string::String,
     #[prost(string, tag="3")]
     pub user_vault: ::prost::alloc::string::String,
-    #[prost(string, tag="4")]
-    pub amount: ::prost::alloc::string::String,
+    #[prost(uint64, tag="4")]
+    pub amount: u64,
     #[prost(bool, tag="5")]
     pub withdraw_all: bool,
     #[prost(int64, tag="6")]

@@ -60,7 +60,7 @@ message WithdrawYield {
   string tx_hash = 1;
   string user = 2;
   string user_vault = 3;
-  string amount = 4;
+  uint64 amount = 4;
   bool withdraw_all = 5;
   int64 timestamp = 6;
 }
