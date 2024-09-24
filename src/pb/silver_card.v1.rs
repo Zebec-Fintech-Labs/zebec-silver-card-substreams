@@ -4,6 +4,14 @@
 pub struct Output {
     #[prost(message, repeated, tag="1")]
     pub deposits: ::prost::alloc::vec::Vec<Deposit>,
+    #[prost(message, repeated, tag="2")]
+    pub withdraws: ::prost::alloc::vec::Vec<Withdraw>,
+    #[prost(message, repeated, tag="3")]
+    pub card_purchases: ::prost::alloc::vec::Vec<CardPurchase>,
+    #[prost(message, repeated, tag="4")]
+    pub generate_yields: ::prost::alloc::vec::Vec<GenerateYield>,
+    #[prost(message, repeated, tag="5")]
+    pub withdraw_yields: ::prost::alloc::vec::Vec<WithdrawYield>,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -11,9 +19,9 @@ pub struct Deposit {
     #[prost(string, tag="1")]
     pub tx_hash: ::prost::alloc::string::String,
     #[prost(string, tag="2")]
-    pub source: ::prost::alloc::string::String,
+    pub depositor: ::prost::alloc::string::String,
     #[prost(string, tag="3")]
-    pub destination: ::prost::alloc::string::String,
+    pub user_vault: ::prost::alloc::string::String,
     #[prost(string, tag="4")]
     pub input_token: ::prost::alloc::string::String,
     #[prost(string, tag="5")]
@@ -25,6 +33,70 @@ pub struct Deposit {
     #[prost(enumeration="DepositType", tag="8")]
     pub deposit_type: i32,
     #[prost(int64, tag="9")]
+    pub timestamp: i64,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Withdraw {
+    #[prost(string, tag="1")]
+    pub tx_hash: ::prost::alloc::string::String,
+    #[prost(string, tag="2")]
+    pub user_vault: ::prost::alloc::string::String,
+    #[prost(string, tag="3")]
+    pub withdrawer: ::prost::alloc::string::String,
+    #[prost(string, tag="4")]
+    pub token: ::prost::alloc::string::String,
+    #[prost(uint64, tag="5")]
+    pub amount: u64,
+    #[prost(int64, tag="6")]
+    pub timestamp: i64,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct CardPurchase {
+    #[prost(string, tag="1")]
+    pub tx_hash: ::prost::alloc::string::String,
+    #[prost(uint64, tag="2")]
+    pub card_id: u64,
+    #[prost(string, tag="3")]
+    pub buyer: ::prost::alloc::string::String,
+    #[prost(string, tag="4")]
+    pub buyer_vault: ::prost::alloc::string::String,
+    #[prost(uint64, tag="5")]
+    pub amount: u64,
+    #[prost(string, tag="6")]
+    pub card_type: ::prost::alloc::string::String,
+    #[prost(int64, tag="7")]
+    pub timestamp: i64,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GenerateYield {
+    #[prost(string, tag="1")]
+    pub tx_hash: ::prost::alloc::string::String,
+    #[prost(string, tag="2")]
+    pub user: ::prost::alloc::string::String,
+    #[prost(string, tag="3")]
+    pub user_vault: ::prost::alloc::string::String,
+    #[prost(uint64, tag="4")]
+    pub amount: u64,
+    #[prost(int64, tag="5")]
+    pub timestamp: i64,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct WithdrawYield {
+    #[prost(string, tag="1")]
+    pub tx_hash: ::prost::alloc::string::String,
+    #[prost(string, tag="2")]
+    pub user: ::prost::alloc::string::String,
+    #[prost(string, tag="3")]
+    pub user_vault: ::prost::alloc::string::String,
+    #[prost(string, tag="4")]
+    pub amount: ::prost::alloc::string::String,
+    #[prost(bool, tag="5")]
+    pub withdraw_all: bool,
+    #[prost(int64, tag="6")]
     pub timestamp: i64,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
