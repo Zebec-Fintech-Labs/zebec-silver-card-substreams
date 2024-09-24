@@ -4,61 +4,58 @@ mod types;
 mod utils;
 mod zebec_card_program;
 
-use crate::{
-    jupiter_aggregator_program::JupSwapEvent,
-    pb::silver_card::v1::{Deposit, DepositType},
-};
+
+use crate::pb::silver_card::v1::{Deposit, DepositType};
 use borsh::BorshDeserialize;
-use pb::silver_card::v1::Output;
+use pb::silver_card::v1::{CardPurchase, GenerateYield, Output, Withdraw, WithdrawYield};
 use substreams::log_debug;
 use substreams_solana::pb::sf::solana::r#type::v1::Block;
 use types::Discriminator;
 use utils::bytes_to_base58;
 
 #[substreams::handlers::map]
-fn map_silver_card_data(blk: Block) -> Result<Output, substreams::errors::Error> {
+fn map_silver_card_data(mut blk: Block) -> Result<Output, substreams::errors::Error> {
     let timestamp = blk.block_time.as_ref().unwrap().timestamp;
     let mut output = Output::default();
 
-    blk.transactions_owned().filter(|trx| {
-        let meta = match trx.meta.as_ref() {
+    blk.transactions.retain(|tx| {
+        let meta = match tx.meta.as_ref() {
             Some(meta) => meta,
             None => return false,
         };
-        
+
         if meta.err.is_some() {
             return false;
         }
 
-        if trx.transaction.is_none() {
-             return false;
+        if tx.transaction.is_none() {
+            return false;
         }
+
+        tx.resolved_accounts()
+            .contains(&&zebec_card_program::id_bytes())
+    });
+
+    for confirmed_tx in blk.transactions_owned() {
+        let cloned_confirmed_tx = confirmed_tx.clone();
+        let accounts = cloned_confirmed_tx.resolved_accounts();
         
-        trx.resolved_accounts().contains(&&zebec_card_program::id_bytes())
-    }).for_each(|confirmed_tx| {
-        let accounts = &confirmed_tx.resolved_accounts();
-
-        if let Some(trx) = &confirmed_tx.transaction {
-            let tx_hash = bs58::encode(&trx.signatures[0]).into_string();
-            log_debug!("[map_silver_card_data] tx hash: {}\n", tx_hash);
-
-            let message = trx.message.as_ref().unwrap();
+        if let Some(tx) = confirmed_tx.transaction {
+            let tx_hash = tx.id();
+            log_debug!("[map_silver_card_data] tx hash: {} ", &tx_hash);
+            let message = tx.message.as_ref().unwrap();
             let meta = confirmed_tx.meta.as_ref().unwrap();
 
-
-            // let is_card_trx = message
-            //     .instructions
-            //     .iter()
-            //     .any(|ix| accounts[ix.program_id_index as usize] == zebec_card_program::id_bytes());
-            // assert!(is_card_trx);
-            assert!(
-                !meta.inner_instructions_none
-                    && meta.inner_instructions.len() != message.instructions.len(),
-            );
-
-            let swap_and_deposit_ix = message.instructions.iter().enumerate().find(|ix| {
-                accounts.get(ix.1.program_id_index as usize) == Some(&&jupiter_aggregator_program::id_bytes())
-            });
+            let swap_and_deposit_index =
+                message.instructions.iter().enumerate().find_map(|(i, ix)| {
+                    if accounts.get(ix.program_id_index as usize)
+                        == Some(&&jupiter_aggregator_program::id_bytes())
+                    {
+                        Some(i as u32)
+                    } else {
+                        None
+                    }
+                });
 
             message.instructions.iter().filter(|&ix| {
                 accounts.get(ix.program_id_index as usize) == Some(&&zebec_card_program::id_bytes())
@@ -69,7 +66,7 @@ fn map_silver_card_data(blk: Block) -> Result<Output, substreams::errors::Error>
                 .map(|i| {
                     // log_debug!("[map_silver_card_data] mapping ix index: {}", *i);
                     let account = accounts.get(*i as usize).expect(&format!(
-                        "Index out of bound: mapping ix index: {}",
+                        "Index out of bound: Could not get account at index: {}",
                         *i as usize
                     ));
                     *account
@@ -81,13 +78,13 @@ fn map_silver_card_data(blk: Block) -> Result<Output, substreams::errors::Error>
                 match discriminator {
                     zebec_card_program::instruction::Deposit::DISCRIMINATOR => {
                         let mut deposit = Deposit::default();
-                        deposit.tx_hash = tx_hash.to_string();
+                        deposit.tx_hash = tx_hash.clone();
                         deposit.timestamp = timestamp;
 
                         let data = zebec_card_program::instruction::Deposit::deserialize(
                             &mut &ix.data[8..],
                         )
-                        .expect("Could not deserialize deposit instruction data");
+                        .expect("Could not deserialize Deposit instruction data");
 
                         let deposit_type = match data._params.token_type {
                             zebec_card_program::TokenType::Native => DepositType::Native,
@@ -96,43 +93,135 @@ fn map_silver_card_data(blk: Block) -> Result<Output, substreams::errors::Error>
                         };
 
                         deposit.set_deposit_type(deposit_type);
-                        deposit.source = bytes_to_base58(ix_accounts[0]);
-                        deposit.destination = bytes_to_base58(ix_accounts[3]);
+                        deposit.depositor = bytes_to_base58(ix_accounts[0]);
+                        deposit.user_vault = bytes_to_base58(ix_accounts[3]);
                         deposit.output_token = bytes_to_base58(ix_accounts[2]);
                         deposit.output_amount = data._params.amount;
                         deposit.input_token = bytes_to_base58(ix_accounts[2]);
                         deposit.input_amount = data._params.amount;
 
-                        if swap_and_deposit_ix.is_some() {
-                            let index = swap_and_deposit_ix.unwrap().0;
-                            substreams::log::println(format!("[map_silver_card_data] swap cpi event ix index: {}; inner ix len: {}", index, meta.inner_instructions.len()));
+                        if swap_and_deposit_index.is_some() {
+                            let jup_cpi_event_ixs = meta.inner_instructions.iter().filter_map(|inner_ix| {
+                                if inner_ix.index == swap_and_deposit_index.unwrap() {
+                                    Some(&inner_ix.instructions)
+                                } else {
+                                    None
+                                }
+                            })
+                            .flatten()
+                            .filter(|ix| {
+                                if ix.data.len() >= 8 { 
+                                    let discriminator: [u8; 8] = ix.data[..8].try_into().unwrap();
+                                    
+                                    return discriminator == jupiter_aggregator_program::instructions::EmitSwapEvent::DISCRIMINATOR;
+                                }
 
-                            let jup_cpi_event_ix = meta.inner_instructions[index]
-                                .instructions
-                                .iter()
-                                .find(|ix| {
-                                    accounts.get(ix.program_id_index as usize)
-                                        == Some(&&jupiter_aggregator_program::id_bytes())
-                                })
-                                .expect("Could not find jupiter cpi event instruction");
-
-                            let event_data =
-                                JupSwapEvent::deserialize(&mut &jup_cpi_event_ix.data[16..])
+                                false
+                            })
+                            .collect::<Vec<_>>();
+                            
+                            let jup_cpi_event_ix_len = jup_cpi_event_ixs.len();
+                            if jup_cpi_event_ix_len > 0 {
+                                // there may be one of more cpi event ixs. the first ix includes swap event from input token to other token.
+                                // the last ix includes swap event from other token to output token
+                                
+                                let first_event_data =
+                                jupiter_aggregator_program::instructions::EmitSwapEvent::deserialize(&mut &jup_cpi_event_ixs[0].data[8..])
                                     .expect("Could not deserialize jup swap event");
 
-                            deposit.input_token = bytes_to_base58(&event_data.input_mint);
-                            deposit.input_amount = event_data.input_amount;
-                            deposit.output_token = bytes_to_base58(&event_data.output_mint);
-                            deposit.output_amount = event_data.output_amount;
+                                deposit.input_token = bytes_to_base58(&first_event_data._event.input_mint);
+                                deposit.input_amount = first_event_data._event.input_amount;
+
+                                let last_event_data = if jup_cpi_event_ix_len == 1 {
+                                    first_event_data
+                                } else {
+                                    jupiter_aggregator_program::instructions::EmitSwapEvent::deserialize(&mut &jup_cpi_event_ixs[jup_cpi_event_ix_len - 1].data[8..])
+                                    .expect("Could not deserialize jup swap event")
+                                };
+
+                                deposit.output_token = bytes_to_base58(&last_event_data._event.output_mint);
+                                deposit.output_amount = last_event_data._event.output_amount;
+                            }
+
+                            
                         }
 
                         output.deposits.push(deposit);
-                    }
+                    },
+
+                    zebec_card_program::instruction::Withdraw::DISCRIMINATOR => {
+                        let mut withdraw = Withdraw::default();
+
+                        let data = zebec_card_program::instruction::Withdraw::deserialize(
+                            &mut &ix.data[8..],
+                        )
+                        .expect("Could not deserialize Withdraw instruction data");
+
+                        withdraw.tx_hash = tx_hash.clone();
+                        withdraw.user_vault = bytes_to_base58(ix_accounts[3]);
+                        withdraw.withdrawer = bytes_to_base58(ix_accounts[0]);
+                        withdraw.token = bytes_to_base58(ix_accounts[2]);
+                        withdraw.amount = data._amount;
+                        withdraw.timestamp = timestamp;
+
+                        output.withdraws.push(withdraw);
+                    },
+
+                    zebec_card_program::instruction::BuyPrepaidDigitalCard::DISCRIMINATOR => {
+                        let mut card_purchase = CardPurchase::default();
+
+                        let data = zebec_card_program::instruction::BuyPrepaidDigitalCard::deserialize(
+                            &mut &ix.data[8..],
+                        )
+                        .expect("Could not deserialize BuyPrepaidDigitalCard instruction data");
+
+                        card_purchase.tx_hash = tx_hash.clone();
+                        card_purchase.card_id = data._params.index;
+                        card_purchase.buyer = bytes_to_base58(ix_accounts[0]);
+                        card_purchase.buyer_vault = bytes_to_base58(ix_accounts[2]);
+                        card_purchase.amount = data._params.amount;
+                        card_purchase.card_type = data._params.card_type;
+                        card_purchase.timestamp = timestamp;
+
+                        output.card_purchases.push(card_purchase);
+                    },
+
+                    zebec_card_program::instruction::GenerateYield::DISCRIMINATOR => {
+                        let mut generate_yield = GenerateYield::default();
+
+                        let data = zebec_card_program::instruction::GenerateYield::deserialize(
+                            &mut &ix.data[8..],
+                        )
+                        .expect("Could not deserialize GenerateYield instruction data");
+
+                        generate_yield.tx_hash = tx_hash.clone();
+                        generate_yield.user = bytes_to_base58(ix_accounts[0]);
+                        generate_yield.user_vault = bytes_to_base58(ix_accounts[1]);
+                        generate_yield.amount = data._amount;
+                        generate_yield.timestamp = timestamp;
+
+                        output.generate_yields.push(generate_yield);
+                    },
+
+                    zebec_card_program::instruction::WithdrawYield::DISCRIMINATOR => {
+                        let mut withdraw_yield = WithdrawYield::default();
+
+                        let data = zebec_card_program::instruction::WithdrawYield::deserialize(&mut &ix.data[8..])
+                        .expect("Could not deserialize WithdrawYield instruction data");
+                    
+                        withdraw_yield.tx_hash = tx_hash.clone();
+                        withdraw_yield.user = bytes_to_base58(ix_accounts[0]);
+                        withdraw_yield.user_vault = bytes_to_base58(ix_accounts[1]);
+                        withdraw_yield.amount = data._amount;
+                        withdraw_yield.withdraw_all= data._withdraw_all;
+                        withdraw_yield.timestamp = timestamp;
+                    },
+
                     _ => (),
                 };
             });
         }
-    });
+    }
 
     Ok(output)
 }
