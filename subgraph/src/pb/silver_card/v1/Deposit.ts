@@ -11,10 +11,10 @@ export class Deposit {
     writer.string(message.txHash);
 
     writer.uint32(18);
-    writer.string(message.source);
+    writer.string(message.depositor);
 
     writer.uint32(26);
-    writer.string(message.destination);
+    writer.string(message.userVault);
 
     writer.uint32(34);
     writer.string(message.inputToken);
@@ -47,11 +47,11 @@ export class Deposit {
           break;
 
         case 2:
-          message.source = reader.string();
+          message.depositor = reader.string();
           break;
 
         case 3:
-          message.destination = reader.string();
+          message.userVault = reader.string();
           break;
 
         case 4:
@@ -88,8 +88,8 @@ export class Deposit {
   }
 
   txHash: string;
-  source: string;
-  destination: string;
+  depositor: string;
+  userVault: string;
   inputToken: string;
   outputToken: string;
   inputAmount: u64;
@@ -99,8 +99,8 @@ export class Deposit {
 
   constructor(
     txHash: string = "",
-    source: string = "",
-    destination: string = "",
+    depositor: string = "",
+    userVault: string = "",
     inputToken: string = "",
     outputToken: string = "",
     inputAmount: u64 = 0,
@@ -109,8 +109,8 @@ export class Deposit {
     timestamp: i64 = 0
   ) {
     this.txHash = txHash;
-    this.source = source;
-    this.destination = destination;
+    this.depositor = depositor;
+    this.userVault = userVault;
     this.inputToken = inputToken;
     this.outputToken = outputToken;
     this.inputAmount = inputAmount;

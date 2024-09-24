@@ -4,6 +4,10 @@
 
 import { Writer, Reader } from "as-proto/assembly";
 import { Deposit } from "./Deposit";
+import { Withdraw } from "./Withdraw";
+import { CardPurchase } from "./CardPurchase";
+import { GenerateYield } from "./GenerateYield";
+import { WithdrawYield } from "./WithdrawYield";
 
 export class Output {
   static encode(message: Output, writer: Writer): void {
@@ -12,6 +16,38 @@ export class Output {
       writer.uint32(10);
       writer.fork();
       Deposit.encode(deposits[i], writer);
+      writer.ldelim();
+    }
+
+    const withdraws = message.withdraws;
+    for (let i: i32 = 0; i < withdraws.length; ++i) {
+      writer.uint32(18);
+      writer.fork();
+      Withdraw.encode(withdraws[i], writer);
+      writer.ldelim();
+    }
+
+    const cardPurchases = message.cardPurchases;
+    for (let i: i32 = 0; i < cardPurchases.length; ++i) {
+      writer.uint32(26);
+      writer.fork();
+      CardPurchase.encode(cardPurchases[i], writer);
+      writer.ldelim();
+    }
+
+    const generateYields = message.generateYields;
+    for (let i: i32 = 0; i < generateYields.length; ++i) {
+      writer.uint32(34);
+      writer.fork();
+      GenerateYield.encode(generateYields[i], writer);
+      writer.ldelim();
+    }
+
+    const withdrawYields = message.withdrawYields;
+    for (let i: i32 = 0; i < withdrawYields.length; ++i) {
+      writer.uint32(42);
+      writer.fork();
+      WithdrawYield.encode(withdrawYields[i], writer);
       writer.ldelim();
     }
   }
@@ -27,6 +63,28 @@ export class Output {
           message.deposits.push(Deposit.decode(reader, reader.uint32()));
           break;
 
+        case 2:
+          message.withdraws.push(Withdraw.decode(reader, reader.uint32()));
+          break;
+
+        case 3:
+          message.cardPurchases.push(
+            CardPurchase.decode(reader, reader.uint32())
+          );
+          break;
+
+        case 4:
+          message.generateYields.push(
+            GenerateYield.decode(reader, reader.uint32())
+          );
+          break;
+
+        case 5:
+          message.withdrawYields.push(
+            WithdrawYield.decode(reader, reader.uint32())
+          );
+          break;
+
         default:
           reader.skipType(tag & 7);
           break;
@@ -37,8 +95,22 @@ export class Output {
   }
 
   deposits: Array<Deposit>;
+  withdraws: Array<Withdraw>;
+  cardPurchases: Array<CardPurchase>;
+  generateYields: Array<GenerateYield>;
+  withdrawYields: Array<WithdrawYield>;
 
-  constructor(deposits: Array<Deposit> = []) {
+  constructor(
+    deposits: Array<Deposit> = [],
+    withdraws: Array<Withdraw> = [],
+    cardPurchases: Array<CardPurchase> = [],
+    generateYields: Array<GenerateYield> = [],
+    withdrawYields: Array<WithdrawYield> = []
+  ) {
     this.deposits = deposits;
+    this.withdraws = withdraws;
+    this.cardPurchases = cardPurchases;
+    this.generateYields = generateYields;
+    this.withdrawYields = withdrawYields;
   }
 }

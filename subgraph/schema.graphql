@@ -1,19 +1,52 @@
-enum DepositType {
-    Unspecified,
-    Usdc,
-    Native,
-    NonNative,
-}
-
 type Deposit @entity {
     id: ID!
     txHash: String!
-    source: String!
-    destination: String!
+    depositor: String!
+    userVault: String!
     inputToken: String!
     outputToken: String!
     inputAmount: BigInt!
     outputAmount: BigInt!
     depositType: Int!
+    timestamp: Timestamp!
+}
+
+type Withdraw @entity {
+    id: ID!
+    txHash: String!
+    userVault: String!
+    withdrawer: String!
+    token: String!
+    amount: BigInt!
+    timestamp: Timestamp!
+}
+
+type CardPurchase @entity {
+    id: ID!
+    txHash: String!
+    cardId: BigInt!
+    buyer: String!
+    buyerVault: String!
+    amount: BigInt!
+    cardType: String!
+    timestamp: Timestamp!
+}
+
+type GenerateYield @entity {
+    id: ID!
+    txHash: String!
+    user: String!
+    userVault: String!
+    amount: BigInt!
+    timestamp: Timestamp!
+}
+
+type WithdrawYield @entity {
+    id: ID!
+    txHash: String!
+    user: String!
+    userVault: String!
+    amount: BigInt!
+    withdrawAll: Boolean!
     timestamp: Timestamp!
 }
