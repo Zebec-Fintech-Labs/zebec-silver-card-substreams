@@ -3,6 +3,7 @@ mod pb;
 mod types;
 mod utils;
 mod zebec_card_program;
+mod constants;
 
 
 use crate::pb::silver_card::v1::{Deposit, DepositType};
@@ -49,7 +50,7 @@ fn map_silver_card_data(mut blk: Block) -> Result<Output, substreams::errors::Er
             let swap_and_deposit_index =
                 message.instructions.iter().enumerate().find_map(|(i, ix)| {
                     if accounts.get(ix.program_id_index as usize)
-                        == Some(&&jupiter_aggregator_program::id_bytes())
+                        == Some(&&jupiter_aggregator_program::id().to_vec())
                     {
                         Some(i as u32)
                     } else {
@@ -110,37 +111,48 @@ fn map_silver_card_data(mut blk: Block) -> Result<Output, substreams::errors::Er
                             })
                             .flatten()
                             .filter(|ix| {
-                                if ix.data.len() >= 8 { 
-                                    let discriminator: [u8; 8] = ix.data[..8].try_into().unwrap();
+                                if ix.data.len() >=  16 { 
+                                    let ix_discriminator: [u8; 16] = ix.data[..16].try_into().unwrap();
                                     
-                                    return discriminator == jupiter_aggregator_program::instructions::EmitSwapEvent::DISCRIMINATOR;
+                                    let discriminator: [u8; 16] = [
+                                        constants::ANCHOR_EVENT_IX_TAG_LE, 
+                                        jupiter_aggregator_program::events::SwapEvent::DISCRIMINATOR
+                                    ].concat()
+                                    .try_into()
+                                    .unwrap();
+                                    
+                                    return ix_discriminator == discriminator;
                                 }
 
                                 false
                             })
                             .collect::<Vec<_>>();
                             
-                            let jup_cpi_event_ix_len = jup_cpi_event_ixs.len();
-                            if jup_cpi_event_ix_len > 0 {
+                            let jup_cpi_event_ixs_len = jup_cpi_event_ixs.len();
+                            if jup_cpi_event_ixs_len > 0 {
                                 // there may be one of more cpi event ixs. the first ix includes swap event from input token to other token.
                                 // the last ix includes swap event from other token to output token
                                 
                                 let first_event_data =
-                                jupiter_aggregator_program::instructions::EmitSwapEvent::deserialize(&mut &jup_cpi_event_ixs[0].data[8..])
-                                    .expect("Could not deserialize jup swap event");
+                                jupiter_aggregator_program::events::SwapEvent::deserialize(
+                                    &mut &jup_cpi_event_ixs[0].data[16..]
+                                )
+                                .expect("Could not deserialize jup swap event");
 
-                                deposit.input_token = bytes_to_base58(&first_event_data._event.input_mint);
-                                deposit.input_amount = first_event_data._event.input_amount;
+                                deposit.input_token = bytes_to_base58(&first_event_data.input_mint);
+                                deposit.input_amount = first_event_data.input_amount;
 
-                                let last_event_data = if jup_cpi_event_ix_len == 1 {
+                                let last_event_data = if jup_cpi_event_ixs_len == 1 {
                                     first_event_data
                                 } else {
-                                    jupiter_aggregator_program::instructions::EmitSwapEvent::deserialize(&mut &jup_cpi_event_ixs[jup_cpi_event_ix_len - 1].data[8..])
+                                    jupiter_aggregator_program::events::SwapEvent::deserialize(
+                                        &mut &jup_cpi_event_ixs[jup_cpi_event_ixs_len - 1].data[16..]
+                                    )
                                     .expect("Could not deserialize jup swap event")
                                 };
 
-                                deposit.output_token = bytes_to_base58(&last_event_data._event.output_mint);
-                                deposit.output_amount = last_event_data._event.output_amount;
+                                deposit.output_token = bytes_to_base58(&last_event_data.output_mint);
+                                deposit.output_amount = last_event_data.output_amount;
                             }
 
                             

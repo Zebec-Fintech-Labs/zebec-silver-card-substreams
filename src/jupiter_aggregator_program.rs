@@ -69,44 +69,5 @@ pub fn id() -> Pubkey {
 }
 
 pub fn id_bytes() -> Vec<u8> {
-    vec![
-        4u8, 121u8, 213u8, 91u8, 242u8, 49u8, 192u8, 110u8, 238u8, 116u8, 197u8, 110u8, 206u8,
-        104u8, 21u8, 7u8, 253u8, 177u8, 178u8, 222u8, 163u8, 244u8, 142u8, 81u8, 2u8, 177u8, 205u8,
-        162u8, 86u8, 188u8, 19u8, 143u8,
-    ]
-}
-
-pub use events::*;
-
-pub mod instructions {
-    use super::*;
-
-    pub struct EmitSwapEvent {
-        pub _event: events::SwapEvent,
-    }
-
-    impl borsh::de::BorshDeserialize for EmitSwapEvent
-    where
-        SwapEvent: borsh::BorshDeserialize,
-    {
-        fn deserialize_reader<R: borsh::io::Read>(
-            reader: &mut R,
-        ) -> ::core::result::Result<Self, borsh::io::Error> {
-            let mut event_discriminator = [0u8; 8];
-            reader.read_exact(&mut event_discriminator)?;
-
-            if event_discriminator != SwapEvent::DISCRIMINATOR {
-                return Err(borsh::io::Error::other(
-                    "Swap event discriminator is invalid",
-                ));
-            }
-            Ok(Self {
-                _event: borsh::BorshDeserialize::deserialize_reader(reader)?,
-            })
-        }
-    }
-
-    impl Discriminator for EmitSwapEvent {
-        const DISCRIMINATOR: [u8; 8] = [228, 69, 165, 46, 81, 203, 154, 29];
-    }
+    id().to_vec()
 }
