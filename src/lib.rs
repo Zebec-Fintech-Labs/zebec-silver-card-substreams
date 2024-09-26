@@ -50,7 +50,7 @@ fn map_silver_card_data(mut blk: Block) -> Result<Output, substreams::errors::Er
             let swap_and_deposit_index =
                 message.instructions.iter().enumerate().find_map(|(i, ix)| {
                     if accounts.get(ix.program_id_index as usize)
-                        == Some(&&jupiter_aggregator_program::id().to_vec())
+                        == Some(&&jupiter_aggregator_program::id_bytes())
                     {
                         Some(i as u32)
                     } else {
