@@ -25,7 +25,7 @@ services:
       ipfs: "ipfs:5001"
       GRAPH_LOG: info
     volumes:
-      - $CONFIG:/etc/graph-node/config.toml
+      - ./generated-config.toml:/etc/graph-node/config.toml
 
   ipfs:
     container_name: ipfs-gn

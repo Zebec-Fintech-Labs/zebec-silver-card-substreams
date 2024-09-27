@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 export NETWORK=solana-mainnet-beta
 export SUBSTREAMS_ENDPOINT=mainnet.sol.streamingfast.io:443

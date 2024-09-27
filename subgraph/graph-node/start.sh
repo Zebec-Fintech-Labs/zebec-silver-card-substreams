@@ -1,9 +1,8 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 set -e
 
 ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-export CONFIG=${ROOT}/generated-config.toml
 
 clean=
 
