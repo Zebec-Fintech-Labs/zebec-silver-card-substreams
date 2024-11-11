@@ -26,6 +26,15 @@ export class CardPurchase {
 
     writer.uint32(56);
     writer.int64(message.timestamp);
+
+    writer.uint32(64);
+    writer.uint64(message.slot);
+
+    writer.uint32(72);
+    writer.uint64(message.blockHeight);
+
+    writer.uint32(82);
+    writer.string(message.blockhash);
   }
 
   static decode(reader: Reader, length: i32): CardPurchase {
@@ -63,6 +72,18 @@ export class CardPurchase {
           message.timestamp = reader.int64();
           break;
 
+        case 8:
+          message.slot = reader.uint64();
+          break;
+
+        case 9:
+          message.blockHeight = reader.uint64();
+          break;
+
+        case 10:
+          message.blockhash = reader.string();
+          break;
+
         default:
           reader.skipType(tag & 7);
           break;
@@ -79,6 +100,9 @@ export class CardPurchase {
   amount: u64;
   cardType: string;
   timestamp: i64;
+  slot: u64;
+  blockHeight: u64;
+  blockhash: string;
 
   constructor(
     txHash: string = "",
@@ -87,7 +111,10 @@ export class CardPurchase {
     buyerVault: string = "",
     amount: u64 = 0,
     cardType: string = "",
-    timestamp: i64 = 0
+    timestamp: i64 = 0,
+    slot: u64 = 0,
+    blockHeight: u64 = 0,
+    blockhash: string = ""
   ) {
     this.txHash = txHash;
     this.cardId = cardId;
@@ -96,5 +123,8 @@ export class CardPurchase {
     this.amount = amount;
     this.cardType = cardType;
     this.timestamp = timestamp;
+    this.slot = slot;
+    this.blockHeight = blockHeight;
+    this.blockhash = blockhash;
   }
 }

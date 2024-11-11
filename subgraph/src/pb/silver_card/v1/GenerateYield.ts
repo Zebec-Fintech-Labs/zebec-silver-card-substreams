@@ -20,6 +20,15 @@ export class GenerateYield {
 
     writer.uint32(40);
     writer.int64(message.timestamp);
+
+    writer.uint32(48);
+    writer.uint64(message.slot);
+
+    writer.uint32(56);
+    writer.uint64(message.blockHeight);
+
+    writer.uint32(66);
+    writer.string(message.blockhash);
   }
 
   static decode(reader: Reader, length: i32): GenerateYield {
@@ -49,6 +58,18 @@ export class GenerateYield {
           message.timestamp = reader.int64();
           break;
 
+        case 6:
+          message.slot = reader.uint64();
+          break;
+
+        case 7:
+          message.blockHeight = reader.uint64();
+          break;
+
+        case 8:
+          message.blockhash = reader.string();
+          break;
+
         default:
           reader.skipType(tag & 7);
           break;
@@ -63,18 +84,27 @@ export class GenerateYield {
   userVault: string;
   amount: u64;
   timestamp: i64;
+  slot: u64;
+  blockHeight: u64;
+  blockhash: string;
 
   constructor(
     txHash: string = "",
     user: string = "",
     userVault: string = "",
     amount: u64 = 0,
-    timestamp: i64 = 0
+    timestamp: i64 = 0,
+    slot: u64 = 0,
+    blockHeight: u64 = 0,
+    blockhash: string = ""
   ) {
     this.txHash = txHash;
     this.user = user;
     this.userVault = userVault;
     this.amount = amount;
     this.timestamp = timestamp;
+    this.slot = slot;
+    this.blockHeight = blockHeight;
+    this.blockhash = blockhash;
   }
 }

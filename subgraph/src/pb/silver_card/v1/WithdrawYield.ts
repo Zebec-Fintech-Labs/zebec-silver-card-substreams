@@ -23,6 +23,15 @@ export class WithdrawYield {
 
     writer.uint32(48);
     writer.int64(message.timestamp);
+
+    writer.uint32(56);
+    writer.uint64(message.slot);
+
+    writer.uint32(64);
+    writer.uint64(message.blockHeight);
+
+    writer.uint32(74);
+    writer.string(message.blockhash);
   }
 
   static decode(reader: Reader, length: i32): WithdrawYield {
@@ -56,6 +65,18 @@ export class WithdrawYield {
           message.timestamp = reader.int64();
           break;
 
+        case 7:
+          message.slot = reader.uint64();
+          break;
+
+        case 8:
+          message.blockHeight = reader.uint64();
+          break;
+
+        case 9:
+          message.blockhash = reader.string();
+          break;
+
         default:
           reader.skipType(tag & 7);
           break;
@@ -71,6 +92,9 @@ export class WithdrawYield {
   amount: u64;
   withdrawAll: bool;
   timestamp: i64;
+  slot: u64;
+  blockHeight: u64;
+  blockhash: string;
 
   constructor(
     txHash: string = "",
@@ -78,7 +102,10 @@ export class WithdrawYield {
     userVault: string = "",
     amount: u64 = 0,
     withdrawAll: bool = false,
-    timestamp: i64 = 0
+    timestamp: i64 = 0,
+    slot: u64 = 0,
+    blockHeight: u64 = 0,
+    blockhash: string = ""
   ) {
     this.txHash = txHash;
     this.user = user;
@@ -86,5 +113,8 @@ export class WithdrawYield {
     this.amount = amount;
     this.withdrawAll = withdrawAll;
     this.timestamp = timestamp;
+    this.slot = slot;
+    this.blockHeight = blockHeight;
+    this.blockhash = blockhash;
   }
 }

@@ -33,6 +33,15 @@ export class Deposit {
 
     writer.uint32(72);
     writer.int64(message.timestamp);
+
+    writer.uint32(80);
+    writer.uint64(message.slot);
+
+    writer.uint32(88);
+    writer.uint64(message.blockHeight);
+
+    writer.uint32(98);
+    writer.string(message.blockhash);
   }
 
   static decode(reader: Reader, length: i32): Deposit {
@@ -78,6 +87,18 @@ export class Deposit {
           message.timestamp = reader.int64();
           break;
 
+        case 10:
+          message.slot = reader.uint64();
+          break;
+
+        case 11:
+          message.blockHeight = reader.uint64();
+          break;
+
+        case 12:
+          message.blockhash = reader.string();
+          break;
+
         default:
           reader.skipType(tag & 7);
           break;
@@ -96,6 +117,9 @@ export class Deposit {
   outputAmount: u64;
   depositType: DepositType;
   timestamp: i64;
+  slot: u64;
+  blockHeight: u64;
+  blockhash: string;
 
   constructor(
     txHash: string = "",
@@ -106,7 +130,10 @@ export class Deposit {
     inputAmount: u64 = 0,
     outputAmount: u64 = 0,
     depositType: DepositType = 0,
-    timestamp: i64 = 0
+    timestamp: i64 = 0,
+    slot: u64 = 0,
+    blockHeight: u64 = 0,
+    blockhash: string = ""
   ) {
     this.txHash = txHash;
     this.depositor = depositor;
@@ -117,5 +144,8 @@ export class Deposit {
     this.outputAmount = outputAmount;
     this.depositType = depositType;
     this.timestamp = timestamp;
+    this.slot = slot;
+    this.blockHeight = blockHeight;
+    this.blockhash = blockhash;
   }
 }

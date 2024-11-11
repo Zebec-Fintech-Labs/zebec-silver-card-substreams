@@ -1,52 +1,67 @@
 type Deposit @entity {
-    id: ID!
-    txHash: String!
-    depositor: String!
-    userVault: String!
-    inputToken: String!
-    outputToken: String!
-    inputAmount: BigInt!
-    outputAmount: BigInt!
-    depositType: Int!
-    timestamp: Timestamp!
+	id: ID!
+	txHash: String!
+	depositor: String!
+	userVault: String!
+	inputToken: String!
+	outputToken: String!
+	inputAmount: BigInt!
+	outputAmount: BigInt!
+	depositType: Int!
+	timestamp: Timestamp!
+	slot: BigInt!
+	blockHeight: BigInt!
+	blockhash: String!
 }
 
 type Withdraw @entity {
-    id: ID!
-    txHash: String!
-    userVault: String!
-    withdrawer: String!
-    token: String!
-    amount: BigInt!
-    timestamp: Timestamp!
+	id: ID!
+	txHash: String!
+	userVault: String!
+	withdrawer: String!
+	token: String!
+	amount: BigInt!
+	timestamp: Timestamp!
+	slot: BigInt!
+	blockHeight: BigInt!
+	blockhash: String!
 }
 
 type CardPurchase @entity {
-    id: ID!
-    txHash: String!
-    cardId: BigInt!
-    buyer: String!
-    buyerVault: String!
-    amount: BigInt!
-    cardType: String!
-    timestamp: Timestamp!
+	id: ID!
+	txHash: String!
+	cardId: BigInt!
+	buyer: String!
+	buyerVault: String!
+	amount: BigInt!
+	cardType: String!
+	timestamp: Timestamp!
+	slot: BigInt!
+	blockHeight: BigInt!
+	blockhash: String!
 }
 
 type GenerateYield @entity {
-    id: ID!
-    txHash: String!
-    user: String!
-    userVault: String!
-    amount: BigInt!
-    timestamp: Timestamp!
+	id: ID!
+	txHash: String!
+	user: String!
+	userVault: String!
+	amount: BigInt!
+	timestamp: Timestamp!
+	slot: BigInt!
+	blockHeight: BigInt!
+	blockhash: String!
 }
 
 type WithdrawYield @entity {
-    id: ID!
-    txHash: String!
-    user: String!
-    userVault: String!
-    amount: BigInt!
-    withdrawAll: Boolean!
-    timestamp: Timestamp!
+	id: ID!
+	txHash: String!
+	user: String!
+	userVault: String!
+	amount: BigInt!
+	withdrawAll: Boolean!
+	timestamp: Timestamp!
+	slot: BigInt!
+	blockHeight: BigInt!
+	blockhash: String!
 }

@@ -166,6 +166,45 @@ export class Deposit extends Entity {
   set timestamp(value: i64) {
     this.set("timestamp", Value.fromTimestamp(value));
   }
+
+  get slot(): BigInt {
+    let value = this.get("slot");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set slot(value: BigInt) {
+    this.set("slot", Value.fromBigInt(value));
+  }
+
+  get blockHeight(): BigInt {
+    let value = this.get("blockHeight");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set blockHeight(value: BigInt) {
+    this.set("blockHeight", Value.fromBigInt(value));
+  }
+
+  get blockhash(): string {
+    let value = this.get("blockhash");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set blockhash(value: string) {
+    this.set("blockhash", Value.fromString(value));
+  }
 }
 
 export class Withdraw extends Entity {
@@ -283,6 +322,45 @@ export class Withdraw extends Entity {
 
   set timestamp(value: i64) {
     this.set("timestamp", Value.fromTimestamp(value));
+  }
+
+  get slot(): BigInt {
+    let value = this.get("slot");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set slot(value: BigInt) {
+    this.set("slot", Value.fromBigInt(value));
+  }
+
+  get blockHeight(): BigInt {
+    let value = this.get("blockHeight");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set blockHeight(value: BigInt) {
+    this.set("blockHeight", Value.fromBigInt(value));
+  }
+
+  get blockhash(): string {
+    let value = this.get("blockhash");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set blockhash(value: string) {
+    this.set("blockhash", Value.fromString(value));
   }
 }
 
@@ -417,6 +495,45 @@ export class CardPurchase extends Entity {
   set timestamp(value: i64) {
     this.set("timestamp", Value.fromTimestamp(value));
   }
+
+  get slot(): BigInt {
+    let value = this.get("slot");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set slot(value: BigInt) {
+    this.set("slot", Value.fromBigInt(value));
+  }
+
+  get blockHeight(): BigInt {
+    let value = this.get("blockHeight");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set blockHeight(value: BigInt) {
+    this.set("blockHeight", Value.fromBigInt(value));
+  }
+
+  get blockhash(): string {
+    let value = this.get("blockhash");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set blockhash(value: string) {
+    this.set("blockhash", Value.fromString(value));
+  }
 }
 
 export class GenerateYield extends Entity {
@@ -523,6 +640,45 @@ export class GenerateYield extends Entity {
 
   set timestamp(value: i64) {
     this.set("timestamp", Value.fromTimestamp(value));
+  }
+
+  get slot(): BigInt {
+    let value = this.get("slot");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set slot(value: BigInt) {
+    this.set("slot", Value.fromBigInt(value));
+  }
+
+  get blockHeight(): BigInt {
+    let value = this.get("blockHeight");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set blockHeight(value: BigInt) {
+    this.set("blockHeight", Value.fromBigInt(value));
+  }
+
+  get blockhash(): string {
+    let value = this.get("blockhash");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set blockhash(value: string) {
+    this.set("blockhash", Value.fromString(value));
   }
 }
 
@@ -643,5 +799,44 @@ export class WithdrawYield extends Entity {
 
   set timestamp(value: i64) {
     this.set("timestamp", Value.fromTimestamp(value));
+  }
+
+  get slot(): BigInt {
+    let value = this.get("slot");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set slot(value: BigInt) {
+    this.set("slot", Value.fromBigInt(value));
+  }
+
+  get blockHeight(): BigInt {
+    let value = this.get("blockHeight");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set blockHeight(value: BigInt) {
+    this.set("blockHeight", Value.fromBigInt(value));
+  }
+
+  get blockhash(): string {
+    let value = this.get("blockhash");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set blockhash(value: string) {
+    this.set("blockhash", Value.fromString(value));
   }
 }

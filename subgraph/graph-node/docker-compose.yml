@@ -16,7 +16,7 @@ services:
       - host.docker.internal:host-gateway
     environment:
       GRAPH_NODE_CONFIG: /etc/graph-node/config.toml
-      SUBSTREAMS_ENDPOINT: $SUBSTREAMS_ENDPOINT
+      SUBSTREAMS_ENDPOINT: mainnet.sol.streamingfast.io:443
       SUBSTREAMS_API_TOKEN: $SUBSTREAMS_API_TOKEN
       postgres_host: postgres
       postgres_user: graph-node
