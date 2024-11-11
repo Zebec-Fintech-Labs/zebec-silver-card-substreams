@@ -27,6 +27,9 @@ message Deposit {
   uint64 output_amount = 7;
   DepositType deposit_type = 8;
   int64 timestamp = 9;
+  uint64 slot = 10;
+  uint64 block_height = 11;
+  string blockhash = 12;
 }
 
 message Withdraw {
@@ -36,6 +39,9 @@ message Withdraw {
   string token = 4;
   uint64 amount = 5;
   int64 timestamp = 6;
+  uint64 slot = 7;
+  uint64 block_height = 8;
+  string blockhash = 9;
 }
 
 message CardPurchase {
@@ -46,6 +52,9 @@ message CardPurchase {
   uint64 amount = 5;
   string card_type = 6;
   int64 timestamp = 7;
+  uint64 slot = 8;
+  uint64 block_height = 9;
+  string blockhash = 10;
 }
 
 message GenerateYield {
@@ -54,6 +63,9 @@ message GenerateYield {
   string user_vault = 3;
   uint64 amount = 4;
   int64 timestamp = 5;
+  uint64 slot = 6;
+  uint64 block_height = 7;
+  string blockhash = 8;
 }
 
 message WithdrawYield {
@@ -63,4 +75,7 @@ message WithdrawYield {
   uint64 amount = 4;
   bool withdraw_all = 5;
   int64 timestamp = 6;
+  uint64 slot = 7;
+  uint64 block_height = 8;
+  string blockhash = 9;
 }

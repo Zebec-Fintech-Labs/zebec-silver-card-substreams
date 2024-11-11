@@ -34,6 +34,12 @@ pub struct Deposit {
     pub deposit_type: i32,
     #[prost(int64, tag="9")]
     pub timestamp: i64,
+    #[prost(uint64, tag="10")]
+    pub slot: u64,
+    #[prost(uint64, tag="11")]
+    pub block_height: u64,
+    #[prost(string, tag="12")]
+    pub blockhash: ::prost::alloc::string::String,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -50,6 +56,12 @@ pub struct Withdraw {
     pub amount: u64,
     #[prost(int64, tag="6")]
     pub timestamp: i64,
+    #[prost(uint64, tag="7")]
+    pub slot: u64,
+    #[prost(uint64, tag="8")]
+    pub block_height: u64,
+    #[prost(string, tag="9")]
+    pub blockhash: ::prost::alloc::string::String,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -68,6 +80,12 @@ pub struct CardPurchase {
     pub card_type: ::prost::alloc::string::String,
     #[prost(int64, tag="7")]
     pub timestamp: i64,
+    #[prost(uint64, tag="8")]
+    pub slot: u64,
+    #[prost(uint64, tag="9")]
+    pub block_height: u64,
+    #[prost(string, tag="10")]
+    pub blockhash: ::prost::alloc::string::String,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -82,6 +100,12 @@ pub struct GenerateYield {
     pub amount: u64,
     #[prost(int64, tag="5")]
     pub timestamp: i64,
+    #[prost(uint64, tag="6")]
+    pub slot: u64,
+    #[prost(uint64, tag="7")]
+    pub block_height: u64,
+    #[prost(string, tag="8")]
+    pub blockhash: ::prost::alloc::string::String,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -98,6 +122,12 @@ pub struct WithdrawYield {
     pub withdraw_all: bool,
     #[prost(int64, tag="6")]
     pub timestamp: i64,
+    #[prost(uint64, tag="7")]
+    pub slot: u64,
+    #[prost(uint64, tag="8")]
+    pub block_height: u64,
+    #[prost(string, tag="9")]
+    pub blockhash: ::prost::alloc::string::String,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]

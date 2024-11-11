@@ -17,6 +17,10 @@ use utils::bytes_to_base58;
 #[substreams::handlers::map]
 fn map_silver_card_data(mut blk: Block) -> Result<Output, substreams::errors::Error> {
     let timestamp = blk.block_time.as_ref().unwrap().timestamp;
+    let block_height=  blk.block_height.as_ref().unwrap().block_height;
+    let slot = blk.slot;
+    let blockhash = blk.blockhash.clone();
+
     let mut output = Output::default();
 
     blk.transactions.retain(|tx| {
@@ -45,7 +49,7 @@ fn map_silver_card_data(mut blk: Block) -> Result<Output, substreams::errors::Er
             let tx_hash = tx.id();
             log_debug!("[map_silver_card_data] tx hash: {} ", &tx_hash);
             let message = tx.message.as_ref().unwrap();
-            let meta = confirmed_tx.meta.as_ref().unwrap();
+            let meta: &substreams_solana::pb::sf::solana::r#type::v1::TransactionStatusMeta = confirmed_tx.meta.as_ref().unwrap();
 
             let swap_and_deposit_index =
                 message.instructions.iter().enumerate().find_map(|(i, ix)| {
@@ -81,6 +85,9 @@ fn map_silver_card_data(mut blk: Block) -> Result<Output, substreams::errors::Er
                         let mut deposit = Deposit::default();
                         deposit.tx_hash = tx_hash.clone();
                         deposit.timestamp = timestamp;
+                        deposit.blockhash = blockhash.clone();
+                        deposit.block_height = block_height;
+                        deposit.slot = slot;
 
                         let data = zebec_card_program::instruction::Deposit::deserialize(
                             &mut &ix.data[8..],
@@ -175,6 +182,9 @@ fn map_silver_card_data(mut blk: Block) -> Result<Output, substreams::errors::Er
                         withdraw.token = bytes_to_base58(ix_accounts[2]);
                         withdraw.amount = data._amount;
                         withdraw.timestamp = timestamp;
+                        withdraw.slot = slot;
+                        withdraw.block_height = block_height;
+                        withdraw.blockhash = blockhash.clone();
 
                         output.withdraws.push(withdraw);
                     },
@@ -194,6 +204,9 @@ fn map_silver_card_data(mut blk: Block) -> Result<Output, substreams::errors::Er
                         card_purchase.amount = data._params.amount;
                         card_purchase.card_type = data._params.card_type;
                         card_purchase.timestamp = timestamp;
+                        card_purchase.slot = slot;
+                        card_purchase.block_height = block_height;
+                        card_purchase.blockhash = blockhash.clone();
 
                         output.card_purchases.push(card_purchase);
                     },
@@ -211,6 +224,9 @@ fn map_silver_card_data(mut blk: Block) -> Result<Output, substreams::errors::Er
                         generate_yield.user_vault = bytes_to_base58(ix_accounts[1]);
                         generate_yield.amount = data._amount;
                         generate_yield.timestamp = timestamp;
+                        generate_yield.slot = slot;
+                        generate_yield.block_height = block_height;
+                        generate_yield.blockhash = blockhash.clone();
 
                         output.generate_yields.push(generate_yield);
                     },
@@ -227,6 +243,9 @@ fn map_silver_card_data(mut blk: Block) -> Result<Output, substreams::errors::Er
                         withdraw_yield.amount = data._amount;
                         withdraw_yield.withdraw_all= data._withdraw_all;
                         withdraw_yield.timestamp = timestamp;
+                        withdraw_yield.slot = slot;
+                        withdraw_yield.block_height = block_height;
+                        withdraw_yield.blockhash = blockhash.clone();
                     },
 
                     _ => (),
