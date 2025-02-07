@@ -9,7 +9,6 @@ message Output {
   repeated GenerateYield generate_yields = 4;
   repeated WithdrawYield withdraw_yields = 5;
 }
-
 enum DepositType {
   DEPOSIT_TYPE_UNSPECIFIED = 0;
   DEPOSIT_TYPE_USDC = 1;
@@ -18,64 +17,148 @@ enum DepositType {
 }
 
 message Deposit {
-  string tx_hash = 1;
-  string depositor = 2;
-  string user_vault = 3;
-  string input_token = 4;
-  string output_token = 5;
+  uint64 slot = 1;
+  uint64 block_height = 2;
+  string blockhash = 3;
+  int64 timestamp = 4;
+  string tx_hash = 5;
+
   uint64 input_amount = 6;
   uint64 output_amount = 7;
-  DepositType deposit_type = 8;
-  int64 timestamp = 9;
-  uint64 slot = 10;
-  uint64 block_height = 11;
-  string blockhash = 12;
+  string input_token = 8;
+  string output_token = 9;
+  DepositType deposit_type = 10;
+  string depositor = 11;
+  string user_vault = 12;
+  string purchase_record = 13;
 }
 
 message Withdraw {
-  string tx_hash = 1;
-  string user_vault = 2;
-  string withdrawer = 3;
-  string token = 4;
-  uint64 amount = 5;
-  int64 timestamp = 6;
-  uint64 slot = 7;
-  uint64 block_height = 8;
-  string blockhash = 9;
+  uint64 slot = 1;
+  uint64 block_height = 2;
+  string blockhash = 3;
+  int64 timestamp = 4;
+  string tx_hash = 5;
+
+  uint64 amount = 6;
+  string token = 7;
+  string user_vault = 8;
+  string withdrawer = 9;
 }
 
 message CardPurchase {
-  string tx_hash = 1;
-  uint64 card_id = 2;
-  string buyer = 3;
-  string buyer_vault = 4;
-  uint64 amount = 5;
-  string card_type = 6;
-  int64 timestamp = 7;
-  uint64 slot = 8;
-  uint64 block_height = 9;
-  string blockhash = 10;
+  uint64 slot = 1;
+  uint64 block_height = 2;
+  string blockhash = 3;
+  int64 timestamp = 4;
+  string tx_hash = 5;
+
+  uint64 card_id = 6;
+  string card_type = 7;
+  uint64 amount = 8;
+  string buyer = 9;
+  string buyer_vault = 10;
+  string purchase_record = 11;
 }
 
 message GenerateYield {
-  string tx_hash = 1;
-  string user = 2;
-  string user_vault = 3;
-  uint64 amount = 4;
-  int64 timestamp = 5;
-  uint64 slot = 6;
-  uint64 block_height = 7;
-  string blockhash = 8;
+  uint64 slot = 1;
+  uint64 block_height = 2;
+  string blockhash = 3;
+  int64 timestamp = 4;
+  string tx_hash = 5;
+
+  uint64 amount = 6;
+  string user = 7;
+  string user_vault = 8;
 }
 
 message WithdrawYield {
-  string tx_hash = 1;
-  string user = 2;
-  string user_vault = 3;
-  uint64 amount = 4;
-  bool withdraw_all = 5;
-  int64 timestamp = 6;
-  uint64 slot = 7;
-  uint64 block_height = 8;
-  string blockhash = 9;
+  uint64 slot = 1;
+  uint64 block_height = 2;
+  string blockhash = 3;
+  int64 timestamp = 4;
+  string tx_hash = 5;
+
+  uint64 amount = 6;
+  bool withdraw_all = 7;
+  string user = 8;
+  string user_vault = 9;
 }
+
+message DirectCardPurchase {
+  uint64 slot = 1;
+  uint64 block_height = 2;
+  string blockhash = 3;
+  int64 timestamp = 4;
+  string tx_hash = 5;
+
+  string input_token = 6;
+  string output_token = 7;
+  uint64 input_amount = 8;
+  uint64 output_amount = 9;
+  uint64 card_id = 10;
+  string card_type = 11;
+  string buyer = 12;
+  string buyer_purchase = 13;
+  string purchase_record = 14;
+}
+
+// Card Bot Messages
+message InitCardBotUserAccount {
+  uint64 slot = 1;
+  uint64 block_height = 2;
+  string blockhash = 3;
+  int64 timestamp = 4;
+  string tx_hash = 5;
+
+  string user_id = 6;
+  string user_custody = 7;
+  string usdc_token = 8;
+  string admin = 9;
+}
+
+message CardBotDirectCardPurchase {
+  uint64 slot = 1;
+  uint64 block_height = 2;
+  string blockhash = 3;
+  int64 timestamp = 4;
+  string tx_hash = 5;
+
+  string user_id = 6;
+  string input_token = 7;
+  string output_token = 8;
+  uint64 input_amount = 9;
+  uint64 output_amount = 10;
+  string user_custody = 11;
+  string admin = 12;
+}
+
+// // On Ramp Messages
+// message InitOnRampUserAccount {
+//   uint64 slot = 1;
+//   uint64 block_height = 2;
+//   string blockhash = 3;
+//   int64 timestamp = 4;
+//   string tx_hash = 5;
+
+//   string user_id = 6;
+//   string user_custody = 7;
+//   string zbcn_token = 8;
+//   string admin = 9;
+// }
+
+// message OnRampTransferZbcn {
+//   uint64 slot = 1;
+//   uint64 block_height = 2;
+//   string blockhash = 3;
+//   int64 timestamp = 4;
+//   string tx_hash = 5;
+
+//   string user_id = 6;
+//   uint64 amount = 7;
+//   string user_custody = 8;
+//   string destination = 9;
+//   string zbcn_token = 10;
+//   string admin = 11;
+// }
