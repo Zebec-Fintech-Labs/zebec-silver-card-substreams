@@ -12,6 +12,12 @@ pub struct Output {
     pub generate_yields: ::prost::alloc::vec::Vec<GenerateYield>,
     #[prost(message, repeated, tag="5")]
     pub withdraw_yields: ::prost::alloc::vec::Vec<WithdrawYield>,
+    #[prost(message, repeated, tag="6")]
+    pub direct_card_purhcases: ::prost::alloc::vec::Vec<DirectCardPurchase>,
+    #[prost(message, repeated, tag="7")]
+    pub card_bot_user_account_inits: ::prost::alloc::vec::Vec<InitCardBotUserAccount>,
+    #[prost(message, repeated, tag="8")]
+    pub card_bot_direct_card_purchases: ::prost::alloc::vec::Vec<CardBotDirectCardPurchase>,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]

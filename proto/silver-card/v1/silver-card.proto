@@ -8,7 +8,11 @@ message Output {
   repeated CardPurchase card_purchases = 3;
   repeated GenerateYield generate_yields = 4;
   repeated WithdrawYield withdraw_yields = 5;
+  repeated DirectCardPurchase direct_card_purhcases = 6;
+  repeated InitCardBotUserAccount card_bot_user_account_inits = 7;
+  repeated CardBotDirectCardPurchase card_bot_direct_card_purchases = 8;
 }
+
 enum DepositType {
   DEPOSIT_TYPE_UNSPECIFIED = 0;
   DEPOSIT_TYPE_USDC = 1;
