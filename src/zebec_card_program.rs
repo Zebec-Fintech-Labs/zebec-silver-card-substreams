@@ -1,74 +1,74 @@
 use crate::types::Pubkey;
 
-mod error {
-    // use error_code;
-    #[repr(u32)]
-    #[derive(Debug, Clone, Copy)]
-    pub enum ZebecCardError {
-        InvalidIndex,
-        InvalidMint,
-        InvalidOwner,
-        InvalidUser,
-        InvalidAmount,
-        NotEnoughBalance,
-        AmountNotWithinCardBuyRange,
-        DailyBuyLimitExceeded,
-        VotingCapExceeded,
-        AlreadyVoted,
-        AlreadyWithdrawn,
-        InvalidTime,
-    }
+// mod error {
+//     // use error_code;
+//     #[repr(u32)]
+//     #[derive(Debug, Clone, Copy)]
+//     pub enum ZebecCardError {
+//         InvalidIndex,
+//         InvalidMint,
+//         InvalidOwner,
+//         InvalidUser,
+//         InvalidAmount,
+//         NotEnoughBalance,
+//         AmountNotWithinCardBuyRange,
+//         DailyBuyLimitExceeded,
+//         VotingCapExceeded,
+//         AlreadyVoted,
+//         AlreadyWithdrawn,
+//         InvalidTime,
+//     }
 
-    impl From<ZebecCardError> for u32 {
-        fn from(e: ZebecCardError) -> u32 {
-            e as u32
-        }
-    }
+//     impl From<ZebecCardError> for u32 {
+//         fn from(e: ZebecCardError) -> u32 {
+//             e as u32
+//         }
+//     }
 
-    impl std::fmt::Display for ZebecCardError {
-        fn fmt(
-            &self,
-            fmt: &mut std::fmt::Formatter<'_>,
-        ) -> std::result::Result<(), std::fmt::Error> {
-            match self {
-                ZebecCardError::InvalidIndex => {
-                    fmt.write_fmt(format_args!("The provided index is invalid."))
-                }
-                ZebecCardError::InvalidMint => {
-                    fmt.write_fmt(format_args!("The provided token is invalid."))
-                }
-                ZebecCardError::InvalidOwner => {
-                    fmt.write_fmt(format_args!("The provided owner is invalid."))
-                }
-                ZebecCardError::InvalidUser => {
-                    fmt.write_fmt(format_args!("The provided user is invalid."))
-                }
-                ZebecCardError::InvalidAmount => {
-                    fmt.write_fmt(format_args!("The amount entered is invalid."))
-                }
-                ZebecCardError::NotEnoughBalance => {
-                    fmt.write_fmt(format_args!("You do not have enough balance."))
-                }
-                ZebecCardError::AmountNotWithinCardBuyRange => {
-                    fmt.write_fmt(format_args!("Amount falls off the min-max card buy range."))
-                }
-                ZebecCardError::DailyBuyLimitExceeded => {
-                    fmt.write_fmt(format_args!("BuyCard Limit Exceeded for the day."))
-                }
-                ZebecCardError::VotingCapExceeded => {
-                    fmt.write_fmt(format_args!("Voting amount has exceeded the cap."))
-                }
-                ZebecCardError::AlreadyVoted => {
-                    fmt.write_fmt(format_args!("Voter has already voted."))
-                }
-                ZebecCardError::AlreadyWithdrawn => {
-                    fmt.write_fmt(format_args!("Voter has already withdrawn."))
-                }
-                ZebecCardError::InvalidTime => fmt.write_fmt(format_args!("Invalid time")),
-            }
-        }
-    }
-}
+//     impl std::fmt::Display for ZebecCardError {
+//         fn fmt(
+//             &self,
+//             fmt: &mut std::fmt::Formatter<'_>,
+//         ) -> std::result::Result<(), std::fmt::Error> {
+//             match self {
+//                 ZebecCardError::InvalidIndex => {
+//                     fmt.write_fmt(format_args!("The provided index is invalid."))
+//                 }
+//                 ZebecCardError::InvalidMint => {
+//                     fmt.write_fmt(format_args!("The provided token is invalid."))
+//                 }
+//                 ZebecCardError::InvalidOwner => {
+//                     fmt.write_fmt(format_args!("The provided owner is invalid."))
+//                 }
+//                 ZebecCardError::InvalidUser => {
+//                     fmt.write_fmt(format_args!("The provided user is invalid."))
+//                 }
+//                 ZebecCardError::InvalidAmount => {
+//                     fmt.write_fmt(format_args!("The amount entered is invalid."))
+//                 }
+//                 ZebecCardError::NotEnoughBalance => {
+//                     fmt.write_fmt(format_args!("You do not have enough balance."))
+//                 }
+//                 ZebecCardError::AmountNotWithinCardBuyRange => {
+//                     fmt.write_fmt(format_args!("Amount falls off the min-max card buy range."))
+//                 }
+//                 ZebecCardError::DailyBuyLimitExceeded => {
+//                     fmt.write_fmt(format_args!("BuyCard Limit Exceeded for the day."))
+//                 }
+//                 ZebecCardError::VotingCapExceeded => {
+//                     fmt.write_fmt(format_args!("Voting amount has exceeded the cap."))
+//                 }
+//                 ZebecCardError::AlreadyVoted => {
+//                     fmt.write_fmt(format_args!("Voter has already voted."))
+//                 }
+//                 ZebecCardError::AlreadyWithdrawn => {
+//                     fmt.write_fmt(format_args!("Voter has already withdrawn."))
+//                 }
+//                 ZebecCardError::InvalidTime => fmt.write_fmt(format_args!("Invalid time")),
+//             }
+//         }
+//     }
+// }
 
 mod states {
     use std::cmp::Ordering;
@@ -666,6 +666,10 @@ pub fn id() -> Pubkey {
         43u8, 33u8, 14u8, 251u8, 183u8, 143u8, 143u8, 193u8, 126u8, 76u8, 41u8, 91u8, 214u8, 146u8,
         179u8, 245u8, 76u8, 164u8,
     ]
+}
+
+pub fn id_bytes() -> Vec<u8> {
+    id().to_vec()
 }
 
 pub mod instruction {

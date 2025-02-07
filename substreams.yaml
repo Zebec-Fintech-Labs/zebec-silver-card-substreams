@@ -1,7 +1,7 @@
 specVersion: v0.1.0
 package:
     name: solana_zebec_silver_card
-    version: v0.1.1
+    version: v0.1.2
 
 imports:
     solana: https://spkg.io/streamingfast/solana-common-v0.3.0.spkg
