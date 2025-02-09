@@ -4,8 +4,8 @@
 
 import { Writer, Reader } from "as-proto/assembly";
 
-export class CardPurchase {
-  static encode(message: CardPurchase, writer: Writer): void {
+export class CardBotDirectCardPurchase {
+  static encode(message: CardBotDirectCardPurchase, writer: Writer): void {
     writer.uint32(8);
     writer.uint64(message.slot);
 
@@ -21,28 +21,31 @@ export class CardPurchase {
     writer.uint32(42);
     writer.string(message.txHash);
 
-    writer.uint32(48);
-    writer.uint64(message.cardId);
+    writer.uint32(50);
+    writer.string(message.userId);
 
     writer.uint32(58);
-    writer.string(message.cardType);
+    writer.string(message.inputToken);
 
-    writer.uint32(64);
-    writer.uint64(message.amount);
+    writer.uint32(66);
+    writer.string(message.outputToken);
 
-    writer.uint32(74);
-    writer.string(message.buyer);
+    writer.uint32(72);
+    writer.uint64(message.inputAmount);
 
-    writer.uint32(82);
-    writer.string(message.buyerVault);
+    writer.uint32(80);
+    writer.uint64(message.outputAmount);
 
     writer.uint32(90);
-    writer.string(message.purchaseRecord);
+    writer.string(message.userCustody);
+
+    writer.uint32(98);
+    writer.string(message.admin);
   }
 
-  static decode(reader: Reader, length: i32): CardPurchase {
+  static decode(reader: Reader, length: i32): CardBotDirectCardPurchase {
     const end: usize = length < 0 ? reader.end : reader.ptr + length;
-    const message = new CardPurchase();
+    const message = new CardBotDirectCardPurchase();
 
     while (reader.ptr < end) {
       const tag = reader.uint32();
@@ -68,27 +71,31 @@ export class CardPurchase {
           break;
 
         case 6:
-          message.cardId = reader.uint64();
+          message.userId = reader.string();
           break;
 
         case 7:
-          message.cardType = reader.string();
+          message.inputToken = reader.string();
           break;
 
         case 8:
-          message.amount = reader.uint64();
+          message.outputToken = reader.string();
           break;
 
         case 9:
-          message.buyer = reader.string();
+          message.inputAmount = reader.uint64();
           break;
 
         case 10:
-          message.buyerVault = reader.string();
+          message.outputAmount = reader.uint64();
           break;
 
         case 11:
-          message.purchaseRecord = reader.string();
+          message.userCustody = reader.string();
+          break;
+
+        case 12:
+          message.admin = reader.string();
           break;
 
         default:
@@ -105,12 +112,13 @@ export class CardPurchase {
   blockhash: string;
   timestamp: i64;
   txHash: string;
-  cardId: u64;
-  cardType: string;
-  amount: u64;
-  buyer: string;
-  buyerVault: string;
-  purchaseRecord: string;
+  userId: string;
+  inputToken: string;
+  outputToken: string;
+  inputAmount: u64;
+  outputAmount: u64;
+  userCustody: string;
+  admin: string;
 
   constructor(
     slot: u64 = 0,
@@ -118,23 +126,25 @@ export class CardPurchase {
     blockhash: string = "",
     timestamp: i64 = 0,
     txHash: string = "",
-    cardId: u64 = 0,
-    cardType: string = "",
-    amount: u64 = 0,
-    buyer: string = "",
-    buyerVault: string = "",
-    purchaseRecord: string = ""
+    userId: string = "",
+    inputToken: string = "",
+    outputToken: string = "",
+    inputAmount: u64 = 0,
+    outputAmount: u64 = 0,
+    userCustody: string = "",
+    admin: string = ""
   ) {
     this.slot = slot;
     this.blockHeight = blockHeight;
     this.blockhash = blockhash;
     this.timestamp = timestamp;
     this.txHash = txHash;
-    this.cardId = cardId;
-    this.cardType = cardType;
-    this.amount = amount;
-    this.buyer = buyer;
-    this.buyerVault = buyerVault;
-    this.purchaseRecord = purchaseRecord;
+    this.userId = userId;
+    this.inputToken = inputToken;
+    this.outputToken = outputToken;
+    this.inputAmount = inputAmount;
+    this.outputAmount = outputAmount;
+    this.userCustody = userCustody;
+    this.admin = admin;
   }
 }

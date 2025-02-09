@@ -6,32 +6,32 @@ import { Writer, Reader } from "as-proto/assembly";
 
 export class Withdraw {
   static encode(message: Withdraw, writer: Writer): void {
-    writer.uint32(10);
-    writer.string(message.txHash);
-
-    writer.uint32(18);
-    writer.string(message.userVault);
-
-    writer.uint32(26);
-    writer.string(message.withdrawer);
-
-    writer.uint32(34);
-    writer.string(message.token);
-
-    writer.uint32(40);
-    writer.uint64(message.amount);
-
-    writer.uint32(48);
-    writer.int64(message.timestamp);
-
-    writer.uint32(56);
+    writer.uint32(8);
     writer.uint64(message.slot);
 
-    writer.uint32(64);
+    writer.uint32(16);
     writer.uint64(message.blockHeight);
 
-    writer.uint32(74);
+    writer.uint32(26);
     writer.string(message.blockhash);
+
+    writer.uint32(32);
+    writer.int64(message.timestamp);
+
+    writer.uint32(42);
+    writer.string(message.txHash);
+
+    writer.uint32(48);
+    writer.uint64(message.amount);
+
+    writer.uint32(58);
+    writer.string(message.token);
+
+    writer.uint32(66);
+    writer.string(message.userVault);
+
+    writer.uint32(74);
+    writer.string(message.withdrawer);
   }
 
   static decode(reader: Reader, length: i32): Withdraw {
@@ -42,39 +42,39 @@ export class Withdraw {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.txHash = reader.string();
-          break;
-
-        case 2:
-          message.userVault = reader.string();
-          break;
-
-        case 3:
-          message.withdrawer = reader.string();
-          break;
-
-        case 4:
-          message.token = reader.string();
-          break;
-
-        case 5:
-          message.amount = reader.uint64();
-          break;
-
-        case 6:
-          message.timestamp = reader.int64();
-          break;
-
-        case 7:
           message.slot = reader.uint64();
           break;
 
-        case 8:
+        case 2:
           message.blockHeight = reader.uint64();
           break;
 
-        case 9:
+        case 3:
           message.blockhash = reader.string();
+          break;
+
+        case 4:
+          message.timestamp = reader.int64();
+          break;
+
+        case 5:
+          message.txHash = reader.string();
+          break;
+
+        case 6:
+          message.amount = reader.uint64();
+          break;
+
+        case 7:
+          message.token = reader.string();
+          break;
+
+        case 8:
+          message.userVault = reader.string();
+          break;
+
+        case 9:
+          message.withdrawer = reader.string();
           break;
 
         default:
@@ -86,35 +86,35 @@ export class Withdraw {
     return message;
   }
 
-  txHash: string;
-  userVault: string;
-  withdrawer: string;
-  token: string;
-  amount: u64;
-  timestamp: i64;
   slot: u64;
   blockHeight: u64;
   blockhash: string;
+  timestamp: i64;
+  txHash: string;
+  amount: u64;
+  token: string;
+  userVault: string;
+  withdrawer: string;
 
   constructor(
-    txHash: string = "",
-    userVault: string = "",
-    withdrawer: string = "",
-    token: string = "",
-    amount: u64 = 0,
-    timestamp: i64 = 0,
     slot: u64 = 0,
     blockHeight: u64 = 0,
-    blockhash: string = ""
+    blockhash: string = "",
+    timestamp: i64 = 0,
+    txHash: string = "",
+    amount: u64 = 0,
+    token: string = "",
+    userVault: string = "",
+    withdrawer: string = ""
   ) {
-    this.txHash = txHash;
-    this.userVault = userVault;
-    this.withdrawer = withdrawer;
-    this.token = token;
-    this.amount = amount;
-    this.timestamp = timestamp;
     this.slot = slot;
     this.blockHeight = blockHeight;
     this.blockhash = blockhash;
+    this.timestamp = timestamp;
+    this.txHash = txHash;
+    this.amount = amount;
+    this.token = token;
+    this.userVault = userVault;
+    this.withdrawer = withdrawer;
   }
 }

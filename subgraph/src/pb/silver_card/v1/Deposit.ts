@@ -7,20 +7,20 @@ import { DepositType } from "./DepositType";
 
 export class Deposit {
   static encode(message: Deposit, writer: Writer): void {
-    writer.uint32(10);
-    writer.string(message.txHash);
+    writer.uint32(8);
+    writer.uint64(message.slot);
 
-    writer.uint32(18);
-    writer.string(message.depositor);
+    writer.uint32(16);
+    writer.uint64(message.blockHeight);
 
     writer.uint32(26);
-    writer.string(message.userVault);
+    writer.string(message.blockhash);
 
-    writer.uint32(34);
-    writer.string(message.inputToken);
+    writer.uint32(32);
+    writer.int64(message.timestamp);
 
     writer.uint32(42);
-    writer.string(message.outputToken);
+    writer.string(message.txHash);
 
     writer.uint32(48);
     writer.uint64(message.inputAmount);
@@ -28,20 +28,23 @@ export class Deposit {
     writer.uint32(56);
     writer.uint64(message.outputAmount);
 
-    writer.uint32(64);
-    writer.int32(message.depositType);
+    writer.uint32(66);
+    writer.string(message.inputToken);
 
-    writer.uint32(72);
-    writer.int64(message.timestamp);
+    writer.uint32(74);
+    writer.string(message.outputToken);
 
     writer.uint32(80);
-    writer.uint64(message.slot);
+    writer.int32(message.depositType);
 
-    writer.uint32(88);
-    writer.uint64(message.blockHeight);
+    writer.uint32(90);
+    writer.string(message.depositor);
 
     writer.uint32(98);
-    writer.string(message.blockhash);
+    writer.string(message.userVault);
+
+    writer.uint32(106);
+    writer.string(message.purchaseRecord);
   }
 
   static decode(reader: Reader, length: i32): Deposit {
@@ -52,23 +55,23 @@ export class Deposit {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.txHash = reader.string();
+          message.slot = reader.uint64();
           break;
 
         case 2:
-          message.depositor = reader.string();
+          message.blockHeight = reader.uint64();
           break;
 
         case 3:
-          message.userVault = reader.string();
+          message.blockhash = reader.string();
           break;
 
         case 4:
-          message.inputToken = reader.string();
+          message.timestamp = reader.int64();
           break;
 
         case 5:
-          message.outputToken = reader.string();
+          message.txHash = reader.string();
           break;
 
         case 6:
@@ -80,23 +83,27 @@ export class Deposit {
           break;
 
         case 8:
-          message.depositType = reader.int32();
+          message.inputToken = reader.string();
           break;
 
         case 9:
-          message.timestamp = reader.int64();
+          message.outputToken = reader.string();
           break;
 
         case 10:
-          message.slot = reader.uint64();
+          message.depositType = reader.int32();
           break;
 
         case 11:
-          message.blockHeight = reader.uint64();
+          message.depositor = reader.string();
           break;
 
         case 12:
-          message.blockhash = reader.string();
+          message.userVault = reader.string();
+          break;
+
+        case 13:
+          message.purchaseRecord = reader.string();
           break;
 
         default:
@@ -108,44 +115,47 @@ export class Deposit {
     return message;
   }
 
-  txHash: string;
-  depositor: string;
-  userVault: string;
-  inputToken: string;
-  outputToken: string;
-  inputAmount: u64;
-  outputAmount: u64;
-  depositType: DepositType;
-  timestamp: i64;
   slot: u64;
   blockHeight: u64;
   blockhash: string;
+  timestamp: i64;
+  txHash: string;
+  inputAmount: u64;
+  outputAmount: u64;
+  inputToken: string;
+  outputToken: string;
+  depositType: DepositType;
+  depositor: string;
+  userVault: string;
+  purchaseRecord: string;
 
   constructor(
-    txHash: string = "",
-    depositor: string = "",
-    userVault: string = "",
-    inputToken: string = "",
-    outputToken: string = "",
-    inputAmount: u64 = 0,
-    outputAmount: u64 = 0,
-    depositType: DepositType = 0,
-    timestamp: i64 = 0,
     slot: u64 = 0,
     blockHeight: u64 = 0,
-    blockhash: string = ""
+    blockhash: string = "",
+    timestamp: i64 = 0,
+    txHash: string = "",
+    inputAmount: u64 = 0,
+    outputAmount: u64 = 0,
+    inputToken: string = "",
+    outputToken: string = "",
+    depositType: DepositType = 0,
+    depositor: string = "",
+    userVault: string = "",
+    purchaseRecord: string = ""
   ) {
-    this.txHash = txHash;
-    this.depositor = depositor;
-    this.userVault = userVault;
-    this.inputToken = inputToken;
-    this.outputToken = outputToken;
-    this.inputAmount = inputAmount;
-    this.outputAmount = outputAmount;
-    this.depositType = depositType;
-    this.timestamp = timestamp;
     this.slot = slot;
     this.blockHeight = blockHeight;
     this.blockhash = blockhash;
+    this.timestamp = timestamp;
+    this.txHash = txHash;
+    this.inputAmount = inputAmount;
+    this.outputAmount = outputAmount;
+    this.inputToken = inputToken;
+    this.outputToken = outputToken;
+    this.depositType = depositType;
+    this.depositor = depositor;
+    this.userVault = userVault;
+    this.purchaseRecord = purchaseRecord;
   }
 }

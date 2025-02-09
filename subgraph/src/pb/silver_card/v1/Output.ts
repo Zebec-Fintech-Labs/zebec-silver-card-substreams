@@ -8,6 +8,9 @@ import { Withdraw } from "./Withdraw";
 import { CardPurchase } from "./CardPurchase";
 import { GenerateYield } from "./GenerateYield";
 import { WithdrawYield } from "./WithdrawYield";
+import { DirectCardPurchase } from "./DirectCardPurchase";
+import { InitCardBotUserAccount } from "./InitCardBotUserAccount";
+import { CardBotDirectCardPurchase } from "./CardBotDirectCardPurchase";
 
 export class Output {
   static encode(message: Output, writer: Writer): void {
@@ -50,6 +53,30 @@ export class Output {
       WithdrawYield.encode(withdrawYields[i], writer);
       writer.ldelim();
     }
+
+    const directCardPurhcases = message.directCardPurhcases;
+    for (let i: i32 = 0; i < directCardPurhcases.length; ++i) {
+      writer.uint32(50);
+      writer.fork();
+      DirectCardPurchase.encode(directCardPurhcases[i], writer);
+      writer.ldelim();
+    }
+
+    const cardBotUserAccountInits = message.cardBotUserAccountInits;
+    for (let i: i32 = 0; i < cardBotUserAccountInits.length; ++i) {
+      writer.uint32(58);
+      writer.fork();
+      InitCardBotUserAccount.encode(cardBotUserAccountInits[i], writer);
+      writer.ldelim();
+    }
+
+    const cardBotDirectCardPurchases = message.cardBotDirectCardPurchases;
+    for (let i: i32 = 0; i < cardBotDirectCardPurchases.length; ++i) {
+      writer.uint32(66);
+      writer.fork();
+      CardBotDirectCardPurchase.encode(cardBotDirectCardPurchases[i], writer);
+      writer.ldelim();
+    }
   }
 
   static decode(reader: Reader, length: i32): Output {
@@ -85,6 +112,24 @@ export class Output {
           );
           break;
 
+        case 6:
+          message.directCardPurhcases.push(
+            DirectCardPurchase.decode(reader, reader.uint32())
+          );
+          break;
+
+        case 7:
+          message.cardBotUserAccountInits.push(
+            InitCardBotUserAccount.decode(reader, reader.uint32())
+          );
+          break;
+
+        case 8:
+          message.cardBotDirectCardPurchases.push(
+            CardBotDirectCardPurchase.decode(reader, reader.uint32())
+          );
+          break;
+
         default:
           reader.skipType(tag & 7);
           break;
@@ -99,18 +144,27 @@ export class Output {
   cardPurchases: Array<CardPurchase>;
   generateYields: Array<GenerateYield>;
   withdrawYields: Array<WithdrawYield>;
+  directCardPurhcases: Array<DirectCardPurchase>;
+  cardBotUserAccountInits: Array<InitCardBotUserAccount>;
+  cardBotDirectCardPurchases: Array<CardBotDirectCardPurchase>;
 
   constructor(
     deposits: Array<Deposit> = [],
     withdraws: Array<Withdraw> = [],
     cardPurchases: Array<CardPurchase> = [],
     generateYields: Array<GenerateYield> = [],
-    withdrawYields: Array<WithdrawYield> = []
+    withdrawYields: Array<WithdrawYield> = [],
+    directCardPurhcases: Array<DirectCardPurchase> = [],
+    cardBotUserAccountInits: Array<InitCardBotUserAccount> = [],
+    cardBotDirectCardPurchases: Array<CardBotDirectCardPurchase> = []
   ) {
     this.deposits = deposits;
     this.withdraws = withdraws;
     this.cardPurchases = cardPurchases;
     this.generateYields = generateYields;
     this.withdrawYields = withdrawYields;
+    this.directCardPurhcases = directCardPurhcases;
+    this.cardBotUserAccountInits = cardBotUserAccountInits;
+    this.cardBotDirectCardPurchases = cardBotDirectCardPurchases;
   }
 }
