@@ -1,67 +1,116 @@
 type Deposit @entity {
 	id: ID!
-	txHash: String!
-	depositor: String!
-	userVault: String!
-	inputToken: String!
-	outputToken: String!
-	inputAmount: BigInt!
-	outputAmount: BigInt!
-	depositType: Int!
-	timestamp: Timestamp!
 	slot: BigInt!
 	blockHeight: BigInt!
 	blockhash: String!
+	timestamp: Timestamp!
+	
+	inputAmount: BigInt!
+	outputAmount: BigInt!
+	inputToken: String!
+	outputToken: String!
+	depositType: Int!
+	depositor: String!
+	userVault: String!
+	purchaseRecord: String!
 }
 
 type Withdraw @entity {
 	id: ID!
-	txHash: String!
-	userVault: String!
-	withdrawer: String!
-	token: String!
-	amount: BigInt!
-	timestamp: Timestamp!
 	slot: BigInt!
 	blockHeight: BigInt!
 	blockhash: String!
+	timestamp: Timestamp!
+	
+	amount: BigInt!
+	token: String!
+	userVault: String!
+	withdrawer: String!
 }
 
 type CardPurchase @entity {
 	id: ID!
-	txHash: String!
-	cardId: BigInt!
-	buyer: String!
-	buyerVault: String!
-	amount: BigInt!
-	cardType: String!
-	timestamp: Timestamp!
 	slot: BigInt!
 	blockHeight: BigInt!
 	blockhash: String!
+	timestamp: Timestamp!
+
+	cardId: BigInt!
+	cardType: String!
+	amount: BigInt!
+	buyer: String!
+	buyerVault: String!
+	purchaseRecord: String!
 }
 
 type GenerateYield @entity {
 	id: ID!
-	txHash: String!
-	user: String!
-	userVault: String!
-	amount: BigInt!
-	timestamp: Timestamp!
 	slot: BigInt!
 	blockHeight: BigInt!
 	blockhash: String!
+	timestamp: Timestamp!
+
+	amount: BigInt!
+	user: String!
+	userVault: String!
 }
 
 type WithdrawYield @entity {
 	id: ID!
-	txHash: String!
-	user: String!
-	userVault: String!
-	amount: BigInt!
-	withdrawAll: Boolean!
-	timestamp: Timestamp!
 	slot: BigInt!
 	blockHeight: BigInt!
 	blockhash: String!
+	timestamp: Timestamp!
+	
+	amount: BigInt!
+	withdrawAll: Boolean!
+	user: String!
+	userVault: String!
+}
+
+type DirectCardPurchase @entity {
+	id: ID!
+	slot: BigInt!
+	blockHeight: BigInt!
+	blockhash: String!
+	timestamp: Timestamp!
+
+	inputAmount: BigInt!
+	outputAmount: BigInt!
+	inputToken: String!
+	outputToken: String!
+	cardId: BigInt!
+	cardType: String!
+	buyer: String!
+	buyerPurchase: String!
+	purchaseRecord: String!
+}
+
+type InitCardBotUserAccount @entity {
+	id: ID!
+	slot: BigInt!
+	blockHeight: BigInt!
+	blockhash: String!
+	timestamp: Timestamp!
+
+	userId: String!
+	userCustody: String!
+	usdcToken: String!
+	admin: String!
+}
+
+type CardBotDirectCardPurchase @entity {
+	id: ID!
+	slot: BigInt!
+	blockHeight: BigInt!
+	blockhash: String!
+	timestamp: Timestamp!
+
+	userId: String!
+	inputAmount: BigInt!
+	outputAmount: BigInt!
+	inputToken: String!
+	outputToken: String!
+	userCustody: String!
+	admin: String!
 }
