@@ -5,6 +5,7 @@ use crate::types::{Discriminator, Pubkey};
 pub mod events {
     use super::*;
 
+    #[allow(dead_code)]
     pub struct SwapEvent {
         pub amm: Pubkey,
         pub input_mint: Pubkey,

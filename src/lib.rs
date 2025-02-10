@@ -13,6 +13,7 @@ use substreams::log_debug;
 use substreams_solana::pb::sf::solana::r#type::v1::Block;
 use types::Discriminator;
 use utils::bytes_to_base58;
+use zebec_card_program::instruction::TokenTypeV1;
 
 #[substreams::handlers::map]
 fn map_silver_card_data(mut blk: Block) -> Result<Output, substreams::errors::Error> {
@@ -81,7 +82,7 @@ fn map_silver_card_data(mut blk: Block) -> Result<Output, substreams::errors::Er
                 let discriminator: [u8; 8] = ix.data[..8].try_into().unwrap();
 
                 match discriminator {
-                    zebec_card_program::instruction::Deposit::DISCRIMINATOR => {
+                    zebec_card_program::instruction::DepositV2::DISCRIMINATOR => {
                         let mut deposit = Deposit::default();
                         deposit.slot = slot;
                         deposit.block_height = block_height;
@@ -89,24 +90,46 @@ fn map_silver_card_data(mut blk: Block) -> Result<Output, substreams::errors::Er
                         deposit.timestamp = timestamp;
                         deposit.tx_hash = tx_hash.clone(); 
 
-                        let data = zebec_card_program::instruction::Deposit::deserialize(
-                            &mut &ix.data[8..],
-                        )
-                        .expect("Could not deserialize Deposit instruction data");
+                        let is_deposit_v1 = false;
+                        if ix.data.len() ==  8 + 9 {
+                            let is_deposit_v1 = true;
+                            let data = zebec_card_program::instruction::DepositV1::deserialize(
+                                &mut &ix.data[8..],
+                            )
+                            .expect("Could not deserialize Deposit instruction data");
 
-                        deposit.input_amount = data.params.amount;
-                        deposit.output_amount = data.params.amount;
-                        deposit.input_token = bytes_to_base58(ix_accounts[2]);
-                        deposit.output_token = bytes_to_base58(ix_accounts[2]);
-                        
-                        let wsol = bytes_to_base58(&WSOL_PUBKEY);
-                        let usdc = bytes_to_base58(&USDC_PUBKEY);
-                        
-                        let deposit_type = if deposit.input_token == usdc { DepositType::Usdc }
+                            deposit.input_amount = data.params.amount;
+                            deposit.output_amount = data.params.amount;
+                            deposit.input_token = bytes_to_base58(ix_accounts[2]);
+                            deposit.output_token = bytes_to_base58(ix_accounts[2]);
+
+                            match data.params.token_type {
+                                TokenTypeV1::Native => deposit.set_deposit_type(DepositType::Native),
+                                TokenTypeV1::Usdc => deposit.set_deposit_type(DepositType::Usdc),
+                                _ => deposit.set_deposit_type(DepositType::NonNative),
+                            }
+
+                        } else {
+                            let data = zebec_card_program::instruction::DepositV2::deserialize(
+                                &mut &ix.data[8..],
+                            )
+                            .expect("Could not deserialize Deposit instruction data");
+                            deposit.input_amount = data.params.amount;
+                            deposit.output_amount = data.params.amount;
+                            deposit.input_token = bytes_to_base58(&data.params.source_token_address);
+                            deposit.output_token = bytes_to_base58(ix_accounts[2]);
+
+                            let wsol = bytes_to_base58(&WSOL_PUBKEY);
+                            let usdc = bytes_to_base58(&USDC_PUBKEY);
+
+                            let deposit_type = if deposit.input_token == usdc { DepositType::Usdc }
                             else if deposit.input_token == wsol {DepositType::Native } 
                             else { DepositType::NonNative };
+                            
+                            deposit.set_deposit_type(DepositType::Native);
+                        };
 
-                        deposit.set_deposit_type(deposit_type);
+                        
 
                         deposit.depositor = bytes_to_base58(ix_accounts[0]);
                         deposit.user_vault = bytes_to_base58(ix_accounts[3]);
