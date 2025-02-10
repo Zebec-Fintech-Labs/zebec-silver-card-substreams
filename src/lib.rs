@@ -90,9 +90,7 @@ fn map_silver_card_data(mut blk: Block) -> Result<Output, substreams::errors::Er
                         deposit.timestamp = timestamp;
                         deposit.tx_hash = tx_hash.clone(); 
 
-                        let is_deposit_v1 = false;
                         if ix.data.len() ==  8 + 9 {
-                            let is_deposit_v1 = true;
                             let data = zebec_card_program::instruction::DepositV1::deserialize(
                                 &mut &ix.data[8..],
                             )
@@ -126,7 +124,7 @@ fn map_silver_card_data(mut blk: Block) -> Result<Output, substreams::errors::Er
                             else if deposit.input_token == wsol {DepositType::Native } 
                             else { DepositType::NonNative };
                             
-                            deposit.set_deposit_type(DepositType::Native);
+                            deposit.set_deposit_type(deposit_type);
                         };
 
                         
